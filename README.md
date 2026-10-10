@@ -99,7 +99,7 @@ The first publishes a self-contained, compressed single EXE to `artifacts\publis
 ### Development aids
 - `LazyCatCompanion.exe --render-preview <folder>` renders contact sheets of every pose, way of sitting and coat, a close-up, and a scripted wake, jump, groom and sleep run, as PNG files, without opening the cat window.
 - `LazyCatCompanion.exe --render-demo <folder>` renders the README demo: the real cat acting out a 15-second storyboard on a mock desktop, as 30 fps PNG frames plus `cues.json` for the sound.
-- `python demo/make-demo.py` runs `--render-demo`, synthesizes the soundtrack and encodes `demo/lazycat-demo.mp4`, `.gif` and the player `.html` (needs numpy and ffmpeg).
+- `python demo/make-demo.py` runs `--render-demo`, synthesizes the soundtrack and encodes `demo/lazycat-demo.mp4`, `.gif` and the player `.html`, plus the portfolio card as a looping animated WebP (`artifacts/demo/lazycat-card.webp`, or wherever `--card` points). Needs numpy and ffmpeg.
 
 ---
 

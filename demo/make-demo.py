@@ -4,8 +4,11 @@
 2. Synthesizes a soft soundtrack from the cues.json it writes (a music-box lullaby plus little sounds
    for clicks, hearts, purring, the leap and the landing).
 3. Encodes the MP4 (1280x720, with sound), the GIF (800 px wide, silent) and embeds the MP4 in the player.
+4. Encodes the portfolio card: the whole demo as a looping animated WebP, 640x360 at 15 fps. It belongs to the
+   website, not this repository, so it goes to artifacts/demo/lazycat-card.webp unless --card names the
+   website's copy (assets/img/lazycatcompanion.webp in RaisulSohanSite).
 
-Usage:  python demo/make-demo.py [--exe path\\to\\LazyCatCompanion.exe]
+Usage:  python demo/make-demo.py [--exe path\\to\\LazyCatCompanion.exe] [--card path\\to\\card.webp]
 Needs numpy and ffmpeg on PATH. Work files go to artifacts/demo (ignored by git).
 """
 
@@ -28,6 +31,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--exe", type=Path, default=ROOT / "bin" / "Debug" / "net10.0-windows" / "LazyCatCompanion.exe")
     parser.add_argument("--gif-fps", type=int, default=15)
+    parser.add_argument("--card", type=Path, help="where to write the portfolio card (default: artifacts/demo/lazycat-card.webp)")
     args = parser.parse_args()
     if not args.exe.exists():
         raise SystemExit(f"{args.exe} not found. Build the app first (run.bat or dotnet build).")
@@ -69,7 +73,13 @@ def main():
         raise SystemExit("VIDEO_B64 marker not found in lazycat-demo.html")
     html.write_text(page, encoding="utf-8", newline="\n")
 
-    for f in (mp4, gif, html):
+    print("Encoding the portfolio card...")
+    card = args.card or work / "lazycat-card.webp"
+    card.parent.mkdir(parents=True, exist_ok=True)
+    ffmpeg("-framerate", "30", "-i", frames / "frame-%04d.png", "-vf", "fps=15,scale=640:360:flags=lanczos",
+           "-c:v", "libwebp_anim", "-loop", "0", "-quality", "80", "-compression_level", "6", "-preset", "drawing", card)
+
+    for f in (mp4, gif, html, card):
         print(f"{f.name}: {f.stat().st_size / 1e6:.2f} MB")
 
 
